@@ -1,0 +1,5 @@
+versions/icons/
+.test-*
+.retry-*
+.debug-*
+.brave-*
