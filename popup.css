@@ -1,0 +1,18 @@
+* { box-sizing: border-box; }
+body { width: 360px; margin: 0; padding: 14px; color: #202124; font: 13px Arial, sans-serif; }
+h1 { margin: 0 0 6px; font-size: 18px; }
+h2 { margin: 14px 0 7px; font-size: 13px; }
+#stats { color: #5f6368; font-size: 11px; }
+.tab { display: grid; grid-template-columns: 54px 1fr; gap: 2px 7px; padding: 7px; margin: 4px 0; border-left: 4px solid #9aa0a6; background: #f8f9fa; }
+.tab span { grid-row: span 2; font-size: 10px; font-weight: bold; }
+.tab b, .tab small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tab small { color: #5f6368; }
+.next { border-color: #d93025; background: #fce8e6; }
+.soon { border-color: #f9ab00; background: #fef7e0; }
+.protected { border-color: #188038; background: #e6f4ea; }
+.add { display: flex; gap: 5px; }
+input { min-width: 0; flex: 1; padding: 6px; border: 1px solid #dadce0; border-radius: 4px; }
+button { cursor: pointer; border: 1px solid #dadce0; border-radius: 4px; background: white; padding: 5px 8px; }
+#protect { width: 100%; margin-top: 7px; }
+.domain { display: inline-flex; align-items: center; gap: 4px; margin: 6px 5px 0 0; padding: 4px 6px; border-radius: 12px; background: #e8eaed; }
+.domain button { border: 0; padding: 0 2px; background: transparent; }
