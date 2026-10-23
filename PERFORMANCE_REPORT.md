@@ -58,4 +58,3 @@ For the low-memory requirement, v1.1.0 is the safest default: it keeps LRU's dir
 
 [1] https://developer.chrome.com/docs/extensions/reference/api/tabs
 [2] https://www.cs.cornell.edu/courses/cs4410/2017su/lectures/lec14-replacement.html
-[3] https://www.cs.cmu.edu/~natassa/courses/15-721/papers/arcfast.pdf
