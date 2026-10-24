@@ -1,14 +1,26 @@
 <!doctype html>
 <html>
-<head><meta charset="utf-8"><title>Smart Tab Manager</title><link rel="stylesheet" href="popup.css"></head>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Smart Tab Manager</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
 <body>
-  <h1>Smart Tab Manager</h1>
-  <div id="stats"></div>
-  <section><h2>Open tabs</h2><div id="tabs"></div></section>
-  <section><h2>Whitelist</h2>
-    <div class="add"><input id="domain" placeholder="example.com"><button id="add">Add</button></div>
-    <button id="protect">Protect current tab's domain</button>
-    <div id="domains"></div>
+  <header class="hero">
+    <div class="brand-mark">⌁</div>
+    <div><p class="eyebrow">TABMIND</p><h1>Smart Tab Manager</h1></div>
+  </header>
+  <div id="stats" class="stats"></div>
+  <section class="panel">
+    <div class="section-head"><h2>Tab health</h2><div class="legend"><span><i class="dot red"></i>next</span><span><i class="dot orange"></i>soon</span><span><i class="dot green"></i>protected</span></div></div>
+    <div id="tabs" class="tab-list"></div>
+  </section>
+  <section class="panel whitelist-panel">
+    <div class="section-head"><div><h2>Protected domains</h2><p>These tabs are never discarded.</p></div></div>
+    <div class="add"><input id="domain" placeholder="example.com" autocomplete="off"><button id="add">Add</button></div>
+    <button id="protect" class="secondary">Protect current tab’s domain</button>
+    <div id="domains" class="domain-list"></div>
   </section>
   <script src="popup.js"></script>
 </body>

@@ -54,6 +54,10 @@ Do not select the repository root; select the specific version directory.
 - The popup shows open tabs, discarded tabs, protected tabs, and whitelist controls.
 - Whitelist data is stored in `chrome.storage.local`.
 
+## Browser tab-strip limitation
+
+Chrome and Brave do not expose the native tab-strip UI to extensions. The extension can color its popup rows and use extension badges, but it cannot draw a circle beside each native browser tab. This project therefore uses the colored status indicators in the extension popup rather than pretending to modify browser chrome.
+
 ## Verification
 
 All four versions pass JavaScript syntax checks and manifest JSON validation. Each version was loaded by Brave's headless runtime and exposed a live Manifest V3 service-worker target. The detailed comparison is in [`PERFORMANCE_REPORT.md`](PERFORMANCE_REPORT.md).
