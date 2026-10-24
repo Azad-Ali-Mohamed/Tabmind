@@ -3,3 +3,4 @@ versions/icons/
 .retry-*
 .debug-*
 .brave-*
+.ui-test-*
