@@ -10,8 +10,9 @@ Tabmind is a small Manifest V3 extension that limits non-discarded tabs to eight
 | v1.1.0 | LRU with monotonic sequence numbers | Same policy with deterministic ordering and less timestamp-tie risk |
 | v1.2.0 | LFU with oldest-access tie-break | Keeps repeatedly used tabs longer |
 | v1.3.0 | CLOCK / Second Chance | Low-overhead approximation of recency |
+| v1.5.0 | Adaptive LRU score | Combines recency, frequency, active time, idle aging, focus, and tab clusters |
 
-The selected policies are LRU, LFU, and CLOCK. FIFO, RANDOM, OPTIMAL, and the more state-heavy TARC design were not used in the shipped versions: FIFO can show Belady's anomaly, RANDOM is only a control, OPTIMAL needs future knowledge, and TARC adds more per-tab state and persistence than this low-memory extension needs.
+The production policies are LRU, LFU, CLOCK, and the adaptive LRU score in v1.5.0. FIFO, RANDOM, OPTIMAL, and the heavier TARC design were not used as standalone production versions: FIFO can show Belady's anomaly, RANDOM is only a control, OPTIMAL needs future knowledge, and TARC adds more per-tab state and persistence than this low-memory extension needs.
 
 ## Folder layout
 
@@ -52,6 +53,8 @@ Do not select the repository root; select the specific version directory.
 - If more than eight non-discarded tabs exist, the policy selects one eligible victim.
 - Active, pinned, and whitelisted tabs are never selected.
 - The popup shows open tabs, discarded tabs, protected tabs, and whitelist controls.
+- Unprotected tab rows have a green `+` button for immediate domain protection.
+- v1.5.0 can show a browser notification when a newly navigated tab reaches a new domain.
 - Whitelist data is stored in `chrome.storage.local`.
 
 ## Browser tab-strip limitation

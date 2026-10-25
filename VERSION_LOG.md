@@ -33,6 +33,13 @@
 - Uses less ordering work than a full sort and avoids a timestamp per tab.
 - Provides a practical low-overhead recency approximation for many open tabs.
 
-## Selection rationale
+## v1.5.0 — Adaptive LRU score
+
+- Adds a retention score combining recency, decayed frequency, active time, idle aging, window focus, and same-domain/group/opener clustering.
+- Keeps active, pinned, and whitelisted tabs as hard-protected candidates.
+- Adds a green `+` button beside each eligible tab in the popup to protect its domain.
+- Asks about a newly navigated domain with a top-right browser notification containing Protect and Not now actions.
+- Adds optional Firefox `userChrome.css` styling in `firefox/`; native Firefox CSS can show static tab dots but cannot read the extension's dynamic domain score.
+
 
 The three shipped policy families are LRU, LFU, and CLOCK. LRU is the direct fit for tab recency, LFU covers repeated-use workloads, and CLOCK provides a lower-overhead recency approximation. The attached algorithm list's FIFO, RANDOM, and OPTIMAL policies were useful as comparison concepts but not as production policies. TARC was not selected because its affinity, dwell, regret, and persisted-weight state increase complexity and memory for this MVP.

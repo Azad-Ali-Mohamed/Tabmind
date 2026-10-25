@@ -1,0 +1,19 @@
+/* Optional Firefox profile customization.
+   This adds a native tab-strip status dot, but Firefox CSS cannot read
+   Tabmind's per-domain score. Green marks the selected tab; amber marks
+   other tabs. The extension popup remains the authoritative status view. */
+.tabbrowser-tab > .tab-stack::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  margin: auto 2px auto 5px;
+  border-radius: 50%;
+  background: #f4a340;
+  box-shadow: 0 0 0 2px color-mix(in srgb, #f4a340 18%, transparent);
+  order: -1;
+}
+.tabbrowser-tab[selected="true"] > .tab-stack::before,
+.tabbrowser-tab[pinned="true"] > .tab-stack::before {
+  background: #2db879;
+  box-shadow: 0 0 0 2px color-mix(in srgb, #2db879 18%, transparent);
+}

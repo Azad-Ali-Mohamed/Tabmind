@@ -54,6 +54,14 @@ For the low-memory requirement, v1.1.0 is the safest default: it keeps LRU's dir
 - Brave loaded all four version folders as unpacked extensions and exposed each background service worker. The first v1.2.0 probe was a startup race; a retry loaded it successfully.
 - Git tags and commits are used for the four versioned releases.
 
+## v1.5.0 adaptive-score notes
+
+The adaptive release keeps one compact object per tracked tab and does not persist score state. Its runtime state stores last access, visit count, accumulated active time, hostname, group, opener, and activation time. The measured package is 14,176 source bytes, including the same six extension files as the earlier versions; `background.js` is 5,240 bytes because the scoring and notification behavior are in the service worker.
+
+The score is intentionally retention-oriented. Recency and frequency decay with idle age, active time is capped, window focus adds a small boost, and same-domain/group/opener relationships add cluster protection. Active, pinned, and whitelisted tabs remain hard-protected before scoring.
+
+`v1.5.0` passed Node syntax checks, manifest validation, feature-presence checks, and a Brave service-worker load test. Firefox 158.0.1 is installed; the optional `firefox/userChrome.css` file was included for profile-level native tab styling, but Firefox CSS cannot consume the extension's live domain score.
+
 ## Sources
 
 [1] https://developer.chrome.com/docs/extensions/reference/api/tabs
