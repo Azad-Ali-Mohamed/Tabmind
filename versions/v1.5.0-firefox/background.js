@@ -7,7 +7,10 @@ const MAX_VISITS = 20;
 let activeTabId = null;
 
 function host(tab) {
-  try { return new URL(tab.url || "").hostname.toLowerCase(); } catch { return ""; }
+  try {
+    const url = new URL(tab.url || "");
+    return ["http:", "https:"].includes(url.protocol) ? url.hostname.toLowerCase() : "";
+  } catch { return ""; }
 }
 function entry(tab, now = Date.now()) {
   const item = state.get(tab.id) || { lastAccess: now, visits: 1, activeMs: 0, activatedAt: 0 };
