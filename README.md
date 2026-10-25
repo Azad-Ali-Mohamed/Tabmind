@@ -11,6 +11,7 @@ Tabmind is a small Manifest V3 extension that limits non-discarded tabs to eight
 | v1.2.0 | LFU with oldest-access tie-break | Keeps repeatedly used tabs longer |
 | v1.3.0 | CLOCK / Second Chance | Low-overhead approximation of recency |
 | v1.5.0 | Adaptive LRU score | Combines recency, frequency, active time, idle aging, focus, and tab clusters |
+| v1.5.0-firefox | Adaptive LRU score | Firefox-compatible background script manifest |
 
 The production policies are LRU, LFU, CLOCK, and the adaptive LRU score in v1.5.0. FIFO, RANDOM, OPTIMAL, and the heavier TARC design were not used as standalone production versions: FIFO can show Belady's anomaly, RANDOM is only a control, OPTIMAL needs future knowledge, and TARC adds more per-tab state and persistence than this low-memory extension needs.
 
@@ -24,6 +25,8 @@ versions/
   v1.1.0/
   v1.2.0/
   v1.3.0/
+  v1.5.0/
+  v1.5.0-firefox/
 ```
 
 Every version contains only the extension files plus the placeholder icon:
@@ -45,6 +48,14 @@ icons/icon128.png
 4. Choose one version folder, such as `C:\Users\Hpscr\Desktop\OS PROJECT\Tabmind\versions\v1.3.0`.
 
 Do not select the repository root; select the specific version directory.
+
+For Firefox, open `about:debugging#/runtime/this-firefox`, click **Load Temporary Add-on…**, and select:
+
+```text
+C:\Users\Hpscr\Desktop\OS PROJECT\Tabmind\versions\v1.5.0-firefox\manifest.json
+```
+
+The Firefox build uses `background.scripts`; the Chrome/Brave build uses `background.service_worker`.
 
 ## Behavior
 

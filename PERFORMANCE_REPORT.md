@@ -60,7 +60,7 @@ The adaptive release keeps one compact object per tracked tab and does not persi
 
 The score is intentionally retention-oriented. Recency and frequency decay with idle age, active time is capped, window focus adds a small boost, and same-domain/group/opener relationships add cluster protection. Active, pinned, and whitelisted tabs remain hard-protected before scoring.
 
-`v1.5.0` passed Node syntax checks, manifest validation, feature-presence checks, and a Brave service-worker load test. Firefox 158.0.1 is installed; the optional `firefox/userChrome.css` file was included for profile-level native tab styling, but Firefox CSS cannot consume the extension's live domain score.
+`v1.5.0` passed Node syntax checks, manifest validation, feature-presence checks, and a Brave service-worker load test. `v1.5.0-firefox` passed Firefox-manifest and syntax validation and uses `background.scripts` because Firefox does not enable the Chrome-style `background.service_worker` field in this setup. Firefox 158.0.1 is installed; the optional `firefox/userChrome.css` file was included for profile-level native tab styling, but Firefox CSS cannot consume the extension's live domain score.
 
 ## Sources
 
