@@ -68,10 +68,50 @@ This v1.5 manifest declares both `background.scripts` and `background.service_wo
 - v1.5.0 can show a browser notification when a newly navigated tab reaches a new domain.
 - Whitelist data is stored in `chrome.storage.local`.
 
+## v1.5.0 adaptive LRU algorithm
+
+v1.5.0 selects the eligible tab with the lowest retention score. Active, pinned, and whitelisted tabs are filtered out before scoring, so they cannot be evicted by the algorithm.
+
+```text
+retentionScore =
+    0.35 × recency
+  + 0.20 × decayed frequency
+  + 0.15 × active-time score
+  + 0.10 × priority
+  + 0.10 × window-focus score
+  + 0.10 × focus-cluster score
+```
+
+The signals work as follows:
+
+- **Recency:** recently activated tabs receive a higher score.
+- **Frequency:** repeated visits increase retention, but the value is capped and decays with idle age.
+- **Active time:** time spent as the active tab is capped at two minutes of contribution and then aged down.
+- **Priority:** grouped tabs receive a small base boost.
+- **Window focus:** tabs in the active window receive a small boost.
+- **Focus cluster:** tabs on the same hostname, in the same tab group, or related through opener tabs receive additional protection.
+- **Idle aging:** old state loses influence so a historically popular tab does not stay protected forever.
+
+The service worker keeps one compact state object per tracked tab containing last access, visit count, active time, hostname, group, opener, and activation time. Policy state is not persisted; only the domain whitelist is stored in `chrome.storage.local`.
+
+## v1.5.0 performance
+
+The measured v1.5.0 package contains 14,176 source bytes across six extension files; its background service worker is 5,240 bytes. These are source-size measurements, not exact JavaScript heap measurements.
+
+Offline policy simulations used a cache size of eight:
+
+| Workload | LRU | CLOCK | LFU |
+|---|---:|---:|---:|
+| Recency scan, 240 accesses | 240 faults / 0.000 hit rate | 140 / 0.417 | 240 / 0.000 |
+| Frequency-heavy, 768 accesses | 96 / 0.700 | 78 / 0.756 | 68 / 0.787 |
+| Mixed, 240 accesses | 124 / 0.483 | 162 / 0.325 | 124 / 0.483 |
+
+The adaptive policy is designed for real browser behavior rather than one fixed synthetic trace. It adds more per-tab state than simple LRU, but it remains small because it stores only primitive values and does not persist history. Its advantage is that it can retain a recently used, frequently revisited, actively used tab that belongs to the user’s current focus cluster.
+
 ## Browser tab-strip limitation
 
 Chrome and Brave do not expose the native tab-strip UI to extensions. The extension can color its popup rows and use extension badges, but it cannot draw a circle beside each native browser tab. This project therefore uses the colored status indicators in the extension popup rather than pretending to modify browser chrome.
 
 ## Verification
 
-All four versions pass JavaScript syntax checks and manifest JSON validation. Each version was loaded by Brave's headless runtime and exposed a live Manifest V3 service-worker target. The detailed comparison is in [`PERFORMANCE_REPORT.md`](PERFORMANCE_REPORT.md).
+The Chrome/Brave v1.5.0 build and Firefox fallback pass JavaScript syntax checks and manifest JSON validation. The v1.5.0 build was loaded by Brave's headless runtime with a live background service worker. The detailed comparison is in [`PERFORMANCE_REPORT.md`](PERFORMANCE_REPORT.md).
