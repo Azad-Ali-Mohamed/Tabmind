@@ -107,8 +107,14 @@ chrome.runtime.onStartup.addListener(async () => {
   chrome.alarms.create("adaptive-eviction", { periodInMinutes: 1 });
   await seed();
 });
-chrome.tabs.onCreated.addListener(tab => { entry(tab); pendingPrompts.add(tab.id); });
-chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => { if (pendingPrompts.has(tabId) && changeInfo.url) notifyNewDomain(tab); });
+chrome.tabs.onCreated.addListener(tab => {
+  entry(tab);
+  pendingPrompts.add(tab.id);
+  if (host(tab)) notifyNewDomain(tab);
+});
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  if (pendingPrompts.has(tabId) && (changeInfo.url || changeInfo.status === "complete")) notifyNewDomain(tab);
+});
 chrome.tabs.onActivated.addListener(async ({ tabId }) => { const tab = await chrome.tabs.get(tabId); activate(tabId, tab); });
 chrome.tabs.onRemoved.addListener(tabId => { state.delete(tabId); pendingPrompts.delete(tabId); if (activeTabId === tabId) activeTabId = null; });
 chrome.alarms.onAlarm.addListener(alarm => { if (alarm.name === "adaptive-eviction") evict(); });
