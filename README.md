@@ -114,4 +114,4 @@ Chrome and Brave do not expose the native tab-strip UI to extensions. The extens
 
 ## Verification
 
-The Chrome/Brave v1.5.0 build and Firefox fallback pass JavaScript syntax checks and manifest JSON validation. The v1.5.0 build was loaded by Brave's headless runtime with a live background service worker. The detailed comparison is in [`PERFORMANCE_REPORT.md`](PERFORMANCE_REPORT.md).
+The Chrome/Brave v1.5.0 build and Firefox fallback pass JavaScript syntax checks and manifest JSON validation. The v1.5.0 build was loaded by Brave's headless runtime with a live background service worker. See [`KNOWLEDGE_NOTES.md`](KNOWLEDGE_NOTES.md) for the complete change history and technical discussion. The detailed comparison is in [`PERFORMANCE_REPORT.md`](PERFORMANCE_REPORT.md).
