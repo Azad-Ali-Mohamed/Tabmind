@@ -5,7 +5,10 @@
   "description": "Adaptive tab memory management using recency, frequency, focus, and active-time scoring.",
   "permissions": ["tabs", "storage", "alarms", "notifications"],
   "host_permissions": ["<all_urls>"],
-  "background": { "service_worker": "background.js" },
+  "background": {
+    "scripts": ["background.js"],
+    "service_worker": "background.js"
+  },
   "action": {
     "default_title": "Smart Tab Manager",
     "default_popup": "popup.html",

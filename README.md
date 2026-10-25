@@ -52,10 +52,10 @@ Do not select the repository root; select the specific version directory.
 For Firefox, open `about:debugging#/runtime/this-firefox`, click **Load Temporary Add-on…**, and select:
 
 ```text
-C:\Users\Hpscr\Desktop\OS PROJECT\Tabmind\versions\v1.5.0-firefox\manifest.json
+C:\Users\Hpscr\Desktop\OS PROJECT\Tabmind\versions\v1.5.0\manifest.json
 ```
 
-The Firefox build uses `background.scripts`; the Chrome/Brave build uses `background.service_worker`.
+This v1.5 manifest declares both `background.scripts` and `background.service_worker`. Firefox uses `scripts`; Chrome and Brave use `service_worker`. If Firefox still rejects the combined manifest, use the fallback at `versions\v1.5.0-firefox\manifest.json`.
 
 ## Behavior
 
