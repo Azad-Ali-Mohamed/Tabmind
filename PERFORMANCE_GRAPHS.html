@@ -13,44 +13,56 @@ h1 { margin: 0 0 6px; font-size: 28px; }
 .card { padding: 20px; border: 1px solid #e4e8f0; border-radius: 18px; background: #fff; box-shadow: 0 8px 24px #27324a0d; }
 h2 { margin: 0 0 16px; font-size: 17px; }
 .chart { display: grid; gap: 13px; }
-.row { display: grid; grid-template-columns: 72px 1fr 60px; align-items: center; gap: 10px; }
+.row { display: grid; grid-template-columns: 72px 1fr 68px; align-items: center; gap: 10px; }
 .label { font-weight: 650; font-size: 12px; }
 .track { height: 16px; overflow: hidden; border-radius: 99px; background: #edf0f5; }
-.bar { height: 100%; border-radius: inherit; background: linear-gradient(90deg, #5d5fe8, #8b5cf6); }
-.bar.green { background: linear-gradient(90deg, #23a36d, #55c98d); }
-.bar.orange { background: linear-gradient(90deg, #e98d2e, #f5bb55); }
-.bar.red { background: linear-gradient(90deg, #df5367, #f18a97); }
+.bar { display: block; height: 100%; border-radius: inherit; }
+.blue { background: linear-gradient(90deg, #5d5fe8, #8b5cf6); }
+.green { background: linear-gradient(90deg, #23a36d, #55c98d); }
+.orange { background: linear-gradient(90deg, #e98d2e, #f5bb55); }
+.red { background: linear-gradient(90deg, #df5367, #f18a97); }
 .value { text-align: right; color: #687386; font-size: 11px; }
 table { width: 100%; margin-top: 24px; border-collapse: collapse; background: #fff; font-size: 12px; }
 th, td { padding: 9px; border-bottom: 1px solid #edf0f5; text-align: right; }
 th:first-child, td:first-child { text-align: left; }
 .badge { display: inline-block; padding: 4px 7px; border-radius: 99px; color: #666b9e; background: #eff0ff; font-size: 10px; }
-@media (max-width: 560px) { body { padding: 18px; }.row { grid-template-columns: 62px 1fr 54px; } }
+@media (max-width: 560px) { body { padding: 18px; }.row { grid-template-columns: 62px 1fr 58px; } }
 </style>
 </head>
 <body>
 <h1>Tabmind performance</h1>
 <p class="lead">Memory footprint proxy and offline hit-rate comparison for the tab-eviction policies.</p>
 <div class="grid">
-  <section class="card"><h2>Memory footprint proxy</h2><div id="memory" class="chart"></div><p class="note">Source bytes across each version. This is a size proxy, not an exact browser heap measurement.</p></section>
-  <section class="card"><h2>Average hit rate</h2><div id="hits" class="chart"></div><p class="note">Average of three deterministic cache-size-8 workloads: recency, frequency-heavy, and mixed.</p></section>
+<section class="card">
+<h2>Memory footprint proxy</h2>
+<div class="chart">
+<div class="row"><span class="label">LRU</span><span class="track"><span class="bar red" style="width:45.5%"></span></span><span class="value">6,452 B</span></div>
+<div class="row"><span class="label">LRU+</span><span class="track"><span class="bar green" style="width:44.9%"></span></span><span class="value">6,364 B</span></div>
+<div class="row"><span class="label">LFU</span><span class="track"><span class="bar orange" style="width:45.9%"></span></span><span class="value">6,503 B</span></div>
+<div class="row"><span class="label">CLOCK</span><span class="track"><span class="bar green" style="width:47.7%"></span></span><span class="value">6,764 B</span></div>
+<div class="row"><span class="label">Adaptive</span><span class="track"><span class="bar red" style="width:100%"></span></span><span class="value">14,176 B</span></div>
 </div>
-<table><thead><tr><th>Workload</th><th>LRU</th><th>CLOCK</th><th>LFU</th></tr></thead><tbody>
-<tr><td>Recency scan</td><td>0.000</td><td>0.417</td><td>0.000</td></tr>
-<tr><td>Frequency-heavy</td><td>0.700</td><td>0.756</td><td>0.787</td></tr>
-<tr><td>Mixed</td><td>0.483</td><td>0.325</td><td>0.483</td></tr>
-</tbody></table>
-<p class="note"><span class="badge">Adaptive LRU v1.5</span> measured source size: 14,176 bytes. Its hit-rate bar is intentionally omitted until it has a dedicated trace benchmark; no performance number is fabricated.</p>
-<script>
-const memory = [
-  ["LRU", 6452, "red"], ["LRU+", 6364, "green"], ["LFU", 6503, "orange"], ["CLOCK", 6764, "green"], ["Adaptive", 14176, "red"]
-];
-const hits = [["LRU", 39.4, "red"], ["CLOCK", 49.9, "green"], ["LFU", 42.3, "orange"]];
-function draw(id, rows, max, suffix) {
-  document.getElementById(id).innerHTML = rows.map(([name, value, color]) => `<div class="row"><span class="label">${name}</span><span class="track"><span class="bar ${color}" style="width:${value / max * 100}%"></span></span><span class="value">${value}${suffix}</span></div>`).join("");
-}
-draw("memory", memory, 14176, " B");
-draw("hits", hits, 100, "%");
-</script>
+<p class="note">Source bytes across each version. This is a size proxy, not an exact browser heap measurement.</p>
+</section>
+<section class="card">
+<h2>Average hit rate</h2>
+<div class="chart">
+<div class="row"><span class="label">LRU</span><span class="track"><span class="bar red" style="width:39.4%"></span></span><span class="value">39.4%</span></div>
+<div class="row"><span class="label">CLOCK</span><span class="track"><span class="bar green" style="width:49.9%"></span></span><span class="value">49.9%</span></div>
+<div class="row"><span class="label">LFU</span><span class="track"><span class="bar orange" style="width:42.3%"></span></span><span class="value">42.3%</span></div>
+<div class="row"><span class="label">Adaptive</span><span class="track"><span class="bar" style="width:0%"></span></span><span class="value">N/A</span></div>
+</div>
+<p class="note">Average of three deterministic cache-size-8 workloads. Adaptive LRU is marked N/A until it has a dedicated trace benchmark.</p>
+</section>
+</div>
+<table>
+<thead><tr><th>Workload</th><th>LRU</th><th>CLOCK</th><th>LFU</th></tr></thead>
+<tbody>
+<tr><td>Recency scan, 240 accesses</td><td>0.000</td><td>0.417</td><td>0.000</td></tr>
+<tr><td>Frequency-heavy, 768 accesses</td><td>0.700</td><td>0.756</td><td>0.787</td></tr>
+<tr><td>Mixed, 240 accesses</td><td>0.483</td><td>0.325</td><td>0.483</td></tr>
+</tbody>
+</table>
+<p class="note"><span class="badge">Measured data</span> Hit rates are offline policy simulations, not live browser RAM measurements.</p>
 </body>
 </html>
