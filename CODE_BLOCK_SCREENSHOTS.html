@@ -1,0 +1,101 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Tabmind Important Code Blocks</title>
+<style>
+*{box-sizing:border-box}body{margin:0;padding:42px;background:#111827;color:#e5e7eb;font:16px system-ui, sans-serif}h1{margin:0 0 8px;font-size:32px}h2{margin:34px 0 12px;color:#a5b4fc;font-size:21px}p{color:#9ca3af;margin:0 0 22px}.card{margin:0 0 28px;border:1px solid #374151;border-radius:14px;overflow:hidden;background:#1f2937}.title{padding:12px 16px;background:#273449;color:#c4b5fd;font-weight:700}.code{margin:0;padding:18px;overflow:hidden;color:#d1fae5;background:#111827;font:14px/1.55 Consolas,"Cascadia Code",monospace;white-space:pre-wrap;word-break:break-word}.accent{color:#fbbf24}
+</style></head><body>
+<h1>Tabmind — Important Code Blocks</h1><p>v1.5.0 adaptive LRU implementation and protection workflow.</p>
+<h2>1. Cross-browser manifest</h2>
+<div class="card"><div class="title">versions/v1.5.0/manifest.json</div><pre class="code">"permissions": ["tabs", "storage", "alarms", "notifications"],
+"host_permissions": ["&lt;all_urls&gt;"],
+"background": {
+  "scripts": ["background.js"],
+  "service_worker": "background.js"
+},
+"action": {
+  "default_popup": "popup.html"
+}</pre></div>
+<h2>2. Adaptive retention score</h2>
+<div class="card"><div class="title">versions/v1.5.0/background.js — score()</div><pre class="code">const idle = Math.min((now - item.lastAccess) / (6 * HOUR), 1);
+const aging = 1 - idle;
+const recency = Math.exp(-0.7 * (now - item.lastAccess) / HOUR);
+const frequency = Math.min(
+  Math.log1p(item.visits) / Math.log1p(MAX_VISITS), 1
+) * aging;
+const activeTime = Math.min(item.activeMs / 120000, 1) * aging;
+const priority = item.groupId !== -1 ? 0.8 : 0.35;
+const focus = active && tab.windowId === active.windowId ? 0.7 : 0;
+const cluster = clusterScore(item, active);
+
+const retention =
+  0.35 * recency +
+  0.20 * frequency +
+  0.15 * activeTime +
+  0.10 * priority +
+  0.10 * focus +
+  0.10 * cluster;</pre></div>
+<h2>3. Protection and eviction</h2>
+<div class="card"><div class="title">Hard protection plus lowest-score selection</div><pre class="code">function protectedTab(tab, domains) {
+  const h = host(tab);
+  return tab.active || tab.pinned ||
+    domains.some(d => h === d || h.endsWith("." + d));
+}
+
+const candidates = open.filter(
+  tab => !protectedTab(tab, domains)
+);
+candidates.sort((a, b) =>
+  score(a, active).retention - score(b, active).retention
+);
+if (candidates[0]) {
+  await chrome.tabs.discard(candidates[0].id);
+}</pre></div>
+<h2>4. New-tab protection notification</h2>
+<div class="card"><div class="title">Wait for a real HTTP/HTTPS domain</div><pre class="code">function host(tab) {
+  try {
+    const url = new URL(tab.url || "");
+    return ["http:", "https:"].includes(url.protocol)
+      ? url.hostname.toLowerCase()
+      : "";
+  } catch { return ""; }
+}
+
+chrome.tabs.onCreated.addListener(tab => {
+  entry(tab);
+  pendingPrompts.add(tab.id);
+});
+
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  if (pendingPrompts.has(tabId) &&
+      (changeInfo.url || changeInfo.status === "complete")) {
+    notifyNewDomain(tab);
+  }
+});</pre></div>
+<h2>5. Per-tab protect button</h2>
+<div class="card"><div class="title">versions/v1.5.0/popup.js</div><pre class="code">const protect = !safe &amp;&amp; h
+  ? `&lt;button class="protect-tab"
+       data-protect-tab="${esc(h)}"
+       aria-label="Protect ${esc(h)}"&gt;+&lt;/button&gt;`
+  : "";
+
+async function add(value) {
+  value = value.trim().toLowerCase()
+    .replace(/^https?:\/\//, "").split("/")[0];
+  if (value &amp;&amp; !domains.includes(value)) {
+    domains.push(value);
+    await save();
+  }
+}</pre></div>
+<h2>6. Firefox native UI limitation</h2>
+<div class="card"><div class="title">firefox/userChrome.css</div><pre class="code">.tabbrowser-tab &gt; .tab-stack::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #aab2bf;
+}
+
+.tabbrowser-tab[selected="true"] &gt; .tab-stack::before,
+.tabbrowser-tab[pinned="true"] &gt; .tab-stack::before {
+  background: #2db879;
+}</pre></div>
+</body></html>
