@@ -4,6 +4,8 @@ const notificationTargets = new Map();
 const DEFAULTS = ["gmail.com", "outlook.com"];
 const HOUR = 3600000;
 const MAX_VISITS = 20;
+const SCORE_WEIGHTS = { recency: 0.35, frequency: 0.20, activeTime: 0.15, priority: 0.10, focus: 0.10, cluster: 0.10 };
+const CLUSTER_SCORES = { hostname: 1, group: 0.6, opener: 0.4 };
 let activeTabId = null;
 
 function host(tab) {
@@ -48,9 +50,9 @@ function activate(tabId, tab) {
 }
 function clusterScore(item, active) {
   if (!active) return 0;
-  if (item.host && item.host === active.host) return 1;
-  if (item.groupId !== -1 && item.groupId === active.groupId) return 0.6;
-  if (item.openerTabId === active.id || active.openerTabId === item.openerTabId) return 0.4;
+  if (item.host && item.host === active.host) return CLUSTER_SCORES.hostname;
+  if (item.groupId !== -1 && item.groupId === active.groupId) return CLUSTER_SCORES.group;
+  if (item.openerTabId === active.id || active.openerTabId === item.openerTabId) return CLUSTER_SCORES.opener;
   return 0;
 }
 function score(tab, active) {
@@ -64,7 +66,7 @@ function score(tab, active) {
   const priority = item.groupId !== -1 ? 0.8 : 0.35;
   const focus = active && tab.windowId === active.windowId ? 0.7 : 0;
   const cluster = clusterScore(item, active);
-  const retention = 0.35 * recency + 0.20 * frequency + 0.15 * activeTime + 0.10 * priority + 0.10 * focus + 0.10 * cluster;
+  const retention = SCORE_WEIGHTS.recency * recency + SCORE_WEIGHTS.frequency * frequency + SCORE_WEIGHTS.activeTime * activeTime + SCORE_WEIGHTS.priority * priority + SCORE_WEIGHTS.focus * focus + SCORE_WEIGHTS.cluster * cluster;
   return { retention, idle, recency, frequency, activeTime, priority, focus, cluster };
 }
 async function evict() {
